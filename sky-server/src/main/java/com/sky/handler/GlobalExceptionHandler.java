@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
      * @param ex
      * @return
      */
-/*    @ExceptionHandler
+    @ExceptionHandler
     public Result exceptionHandler(SQLIntegrityConstraintViolationException ex){
         //错误信息duplicate entry '哈哈' for key 'employee.idx_username'
         //ex.getMessage()用来获取错误信息
@@ -52,6 +52,6 @@ public class GlobalExceptionHandler {
             return  Result.error(MessageConstant.UNKNOWN_ERROR);
             //return  Result.error("未知错误");跟上面那句意思一样
         }
-    }*/
+    }
 
 }

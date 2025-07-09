@@ -69,7 +69,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param employeeDTO
      * @return
      */
-/*    public Employee save(EmployeeDTO employeeDTO) {
+    public Employee save(EmployeeDTO employeeDTO) {
         Employee employee=new Employee();
         //employee.setName(employeeDTO.getName());
         BeanUtils.copyProperties(employeeDTO,employee);
@@ -82,13 +82,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateTime(LocalDateTime.now());
 
         //设置创建人and修改人的id
-        //TODO 后期改成token解析获取当前人的id
+        //后期改成token解析获取当前人的id
         //employee.setCreateUser(20L);
         employee.setCreateUser(BaseContext.getCurrentId());
         //employee.setUpdateUser(21L);
         employee.setUpdateUser(BaseContext.getCurrentId());//获取当前用户id
         employeeMapper.insert(employee);
         return employee;
-    }*/
+    }
 
 }
