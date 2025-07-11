@@ -72,19 +72,22 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee save(EmployeeDTO employeeDTO) {
         Employee employee=new Employee();
         //employee.setName(employeeDTO.getName());
-        BeanUtils.copyProperties(employeeDTO,employee);
+        BeanUtils.copyProperties(employeeDTO,employee);//将employee的参数拷贝给dto
+
         //设置账号状态status
         employee.setStatus(StatusConstant.ENABLE);
 
         //设置用户密码，使用默认值123456（先md5加密后再比对
+        //DigestUtils.md5DigestAsHex() 方法接受的参数类型是byte数组getbyte[]，而不是字符串，因为哈希算法本质是二进制计算
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
+
         employee.setCreateTime(LocalDateTime.now());
         employee.setUpdateTime(LocalDateTime.now());
 
         //设置创建人and修改人的id
         //后期改成token解析获取当前人的id
         //employee.setCreateUser(20L);
-        employee.setCreateUser(BaseContext.getCurrentId());
+        employee.setCreateUser(BaseContext.getCurrentId());//BaseContext使用threadLocal线程获取当前用户的id
         //employee.setUpdateUser(21L);
         employee.setUpdateUser(BaseContext.getCurrentId());//获取当前用户id
         employeeMapper.insert(employee);
