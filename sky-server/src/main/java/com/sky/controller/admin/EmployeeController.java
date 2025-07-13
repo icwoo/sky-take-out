@@ -98,4 +98,19 @@ public class EmployeeController {
         PageResult pageResult=employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(pageResult);
     }
+
+    /**
+     *启用禁用员工账号
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")//因为有路径参数{status}，所以要加注解@PathVariable
+    @ApiOperation("启用禁用员工账号")
+    //@PathVariable("status")也可以写成@PathVariable，不加后面的，因为传的参数和路径参数一致
+    public Result startOrStop(@PathVariable("status") Integer status,Long id ){
+        log.info("启用禁用员工账号.{},{}",status,id);//{}是占位置的，status和id会动态的进入到花括号里
+        employeeService.startOrStop(status,id);
+        return Result.success();
+    }
 }

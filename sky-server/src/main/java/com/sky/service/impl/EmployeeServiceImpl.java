@@ -112,4 +112,23 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return new PageResult(total,records);//用的lombook提供的构造方法创建的对象
     }
+
+    /**
+     * 启用禁用员工账号
+     * 可以正常写，这里使用动态sql实现
+     * @param status
+     * @param id
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+/*        //new一个对象，set他的status和id，把对象传进去
+        Employee employee = new Employee();
+        employee.setStatus(status);
+        employee.setId(id);
+        employeeMapper.update(employee);*/
+
+        //上面可行，下面是用builder实现，效果一样
+        Employee employee=Employee.builder().status(status).id(id).build();
+        employeeMapper.update(employee);
+    }
 }
