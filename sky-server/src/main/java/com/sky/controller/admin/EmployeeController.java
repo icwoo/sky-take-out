@@ -94,13 +94,14 @@ public class EmployeeController {
     @GetMapping("/page")
     @ApiOperation("员工分页")//也可以写成@ApiOperation(value="员工分页")
     public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO) {
-        log.info("员工分页查询，参数为：{}",employeePageQueryDTO);
-        PageResult pageResult=employeeService.pageQuery(employeePageQueryDTO);
+        log.info("员工分页查询，参数为：{}", employeePageQueryDTO);
+        PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(pageResult);
     }
 
     /**
-     *启用禁用员工账号
+     * 启用禁用员工账号
+     *
      * @param status
      * @param id
      * @return
@@ -108,9 +109,38 @@ public class EmployeeController {
     @PostMapping("/status/{status}")//因为有路径参数{status}，所以要加注解@PathVariable
     @ApiOperation("启用禁用员工账号")
     //@PathVariable("status")也可以写成@PathVariable，不加后面的，因为传的参数和路径参数一致
-    public Result startOrStop(@PathVariable("status") Integer status,Long id ){
-        log.info("启用禁用员工账号.{},{}",status,id);//{}是占位置的，status和id会动态的进入到花括号里
-        employeeService.startOrStop(status,id);
+    public Result startOrStop(@PathVariable("status") Integer status, Long id) {
+        log.info("启用禁用员工账号.{},{}", status, id);//{}是占位置的，status和id会动态的进入到花括号里
+        employeeService.startOrStop(status, id);
+        return Result.success();
+    }
+
+    /**
+     * 根据ID查询员工信息
+     *
+     * @return
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("根据ID查询员工信息")
+    public Result<Employee> getById(@PathVariable Long id) {
+        log.info("根据ID查询员工信息,{}", id);
+        Employee employee = employeeService.getById(id);
+        return Result.success(employee);
+    }
+
+
+    /**
+     * 编辑员工信息
+     * @param employeeDTO
+     * @return
+     */
+    @PutMapping
+    @ApiOperation("编辑员工信息")
+    //不是非得用EmployeeDTO接收，其实用Employee也是完全没问题的
+    //因为提交的是json格式的数据，so需要加一个RequestBody的注解
+    public Result<Employee> update(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("编辑员工信息,{}",employeeDTO);
+        employeeService.update(employeeDTO);//前面写过动态sql语句，不需要重复写了
         return Result.success();
     }
 }

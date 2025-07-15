@@ -34,7 +34,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 员工登录
-     *
+     *这个@Override注解，我觉得加不加都是可以的，因为方法一般不会在接口里就实现，我猜的，就目前来说加不加都一样
      * @param employeeLoginDTO
      * @return
      */
@@ -129,6 +129,32 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         //上面可行，下面是用builder实现，效果一样
         Employee employee=Employee.builder().status(status).id(id).build();
+        employeeMapper.update(employee);
+    }
+
+    /**
+     * 根据ID查询员工信息
+     * @param id
+     * @return
+     */
+    @Override
+    public Employee getById(Long id) {
+        Employee employee= employeeMapper.getById(id);
+        employee.setPassword("****");
+        return employee;
+    }
+
+    /**
+     * 编辑员工信息
+     * @param employeeDTO
+     */
+    @Override
+    public void update(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        //dto传给employee，因为update这个sql语句接收的是employee对象
+        BeanUtils.copyProperties(employeeDTO,employee);//左边的传给右边的
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());//工具类，通过线程获取当前用户id
         employeeMapper.update(employee);
     }
 }
