@@ -86,15 +86,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         //DigestUtils.md5DigestAsHex() 方法接受的参数类型是byte数组getbyte[]，而不是字符串，因为哈希算法本质是二进制计算
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
 
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+        //employee.setCreateTime(LocalDateTime.now());
+        //employee.setUpdateTime(LocalDateTime.now());
 
         //设置创建人and修改人的id
         //后期改成token解析获取当前人的id
         //employee.setCreateUser(20L);
-        employee.setCreateUser(BaseContext.getCurrentId());//BaseContext使用threadLocal线程获取当前用户的id
+        //employee.setCreateUser(BaseContext.getCurrentId());//BaseContext使用threadLocal线程获取当前用户的id
         //employee.setUpdateUser(21L);
-        employee.setUpdateUser(BaseContext.getCurrentId());//获取当前用户id
+        //employee.setUpdateUser(BaseContext.getCurrentId());//获取当前用户id
         employeeMapper.insert(employee);
         return employee;
     }
@@ -153,8 +153,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = new Employee();
         //dto传给employee，因为update这个sql语句接收的是employee对象
         BeanUtils.copyProperties(employeeDTO,employee);//左边的传给右边的
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser(BaseContext.getCurrentId());//工具类，通过线程获取当前用户id
+        //employee.setUpdateTime(LocalDateTime.now());
+        //employee.setUpdateUser(BaseContext.getCurrentId());//工具类，通过线程获取当前用户id
         employeeMapper.update(employee);
     }
 }
