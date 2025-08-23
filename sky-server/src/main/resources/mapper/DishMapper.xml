@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.DishMapper">
+    <!--true:将插入语句完成后新增的主键id返回，id：将返回的内容赋值给名为“id”的这个成员变量-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into dish (name, category_id, price, image, description, create_time, update_time, create_user, update_user,status)
+        values (#{name},#{categoryId},#{price},#{image},#{description},#{createTime},#{updateTime},#{createUser},#{updateUser},#{status})
+    </insert>
+    
+    <select id="pageQuery" resultType="com.sky.vo.DishVO">
+        select d.*,c.name as categoryName from dish d left join category c on d.category_id=c.id
+        <where>
+            <if test="name!=null">
+                 d.name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId!=null">
+                and d.category_id like concat('%',#{categoryId},'%')
+            </if>
+            <if test="status!=null">
+                and d.status like concat('%',#{status},'%')
+            </if>
+        </where>
+        order by d.create_time desc
+    </select>         <!--/*<where>标签会自动去除首个条件的and
+    所有条件建议都写and前缀（保持统一）*/-->
+</mapper>
