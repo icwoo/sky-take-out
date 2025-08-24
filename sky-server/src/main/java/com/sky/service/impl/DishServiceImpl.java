@@ -2,12 +2,19 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
+import com.sky.exception.BaseException;
+import com.sky.exception.DeletionNotAllowedException;
+import com.sky.exception.SetmealEnableFailedException;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
+import com.sky.mapper.SetmealDishMapper;
+import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +38,8 @@ public class DishServiceImpl implements DishService {
     private DishMapper dishMapper;
     @Autowired
     private DishFlavorMapper dishFlavorMapper;
+    @Autowired
+    private SetmealDishMapper setmealDishMapper;
 
     /**
      * 新增菜品和口味数据
@@ -68,6 +77,7 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 菜品分页查询
+     *
      * @param dishPageQueryDTO
      * @return
      */
@@ -75,10 +85,36 @@ public class DishServiceImpl implements DishService {
     public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO) {
 
         //开始分页
-        PageHelper.startPage(dishPageQueryDTO.getPage(),dishPageQueryDTO.getPageSize());
+        PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize());
 
-        Page page=dishMapper.pageQuery(dishPageQueryDTO);
+        Page page = dishMapper.pageQuery(dishPageQueryDTO);
 
         return new PageResult(page.getTotal(), page.getResult());
+    }
+
+    @Override
+    public void deleteDishBatch(List<String> ids) {
+        //要在这里判断，在sql里判断的话返回不了错误信息
+        //1.判断ids的状态是否为0（0：停售状态才可以删除
+        for (String id : ids) {
+            if (dishMapper.getStatusById(id)==StatusConstant.ENABLE) {
+                throw  new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
+            }
+        }
+
+        //2.判断ids是否被套餐关联了，关联了也不能删除
+        //List<String> setmeals= setmealMapper.getSetMealByDishId(ids);//不能放for里面，浪费
+        for (String id : ids) {
+            String meals= setmealDishMapper.getSetMealByDishId(id);
+            if (meals!=null && !meals.isEmpty()){
+                throw new SetmealEnableFailedException(MessageConstant.CATEGORY_BE_RELATED_BY_DISH);
+            }
+        }
+
+        //3.删除菜品，同时删除口味
+        for (String id : ids) {
+            dishMapper.deleteById(id);
+            dishFlavorMapper.deleteByDishId(id);
+        }
     }
 }
